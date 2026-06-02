@@ -18,35 +18,65 @@
     </header>
 
     <main class="controller-board">
-      
-      <div class="poly-btn btn-i control-btn" data-action="BTN_1">
-        <span>I</span>
-      </div>
-      
-      <div class="poly-btn btn-up control-btn" data-action="ALL_UP">
-        <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h16z"/><path d="M12 10l-8 8h16z"/></svg>
-      </div>
-      
-      <div class="poly-btn btn-ii control-btn" data-action="BTN_2">
-        <span>II</span>
-      </div>
+      <svg viewBox="0 0 360 500" class="controller-svg">
+        <defs>
+          <linearGradient id="btn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.08)" />
+            <stop offset="100%" stop-color="rgba(0,0,0,0.6)" />
+          </linearGradient>
+          <linearGradient id="btn-grad-hover" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(0,243,255,0.2)" />
+            <stop offset="100%" stop-color="rgba(0,0,0,0.6)" />
+          </linearGradient>
+        </defs>
 
-      <div class="poly-btn syndicate-btn control-btn" data-action="SYNDICATE">
-        <span>SYNDICATE</span>
-      </div>
+        <!-- BTN I (Top Left) -->
+        <g class="btn-group control-btn" data-action="BTN_1">
+          <polygon points="0,0 80,0 120,200 120,260 0,260" class="poly-shape" />
+          <text x="50" y="100" text-anchor="middle" dominant-baseline="middle" class="poly-text">I</text>
+        </g>
+        
+        <!-- BTN II (Top Right) -->
+        <g class="btn-group control-btn" data-action="BTN_2">
+          <polygon points="280,0 360,0 360,260 240,260 240,200" class="poly-shape" />
+          <text x="310" y="100" text-anchor="middle" dominant-baseline="middle" class="poly-text">II</text>
+        </g>
+        
+        <!-- BTN III (Bottom Left) -->
+        <g class="btn-group control-btn" data-action="BTN_3">
+          <polygon points="0,260 120,260 180,320 80,500 0,500" class="poly-shape" />
+          <text x="50" y="400" text-anchor="middle" dominant-baseline="middle" class="poly-text">III</text>
+        </g>
+        
+        <!-- BTN IV (Bottom Right) -->
+        <g class="btn-group control-btn" data-action="BTN_4">
+          <polygon points="240,260 360,260 360,500 280,500 180,320" class="poly-shape" />
+          <text x="310" y="400" text-anchor="middle" dominant-baseline="middle" class="poly-text">IV</text>
+        </g>
 
-      <div class="poly-btn btn-iii control-btn" data-action="BTN_3">
-        <span>III</span>
-      </div>
-      
-      <div class="poly-btn btn-down control-btn" data-action="ALL_DN">
-        <svg viewBox="0 0 24 24"><path d="M12 20l8-8H4z"/><path d="M12 14l8-8H4z"/></svg>
-      </div>
-      
-      <div class="poly-btn btn-iv control-btn" data-action="BTN_4">
-        <span>IV</span>
-      </div>
+        <!-- UP Arrow -->
+        <g class="btn-group control-btn" data-action="ALL_UP">
+          <polygon points="80,0 280,0 240,200 120,200" class="poly-shape" />
+          <g transform="translate(156, 70) scale(2)">
+            <path class="poly-icon" d="M12 4l-8 8h16z"/><path class="poly-icon" d="M12 10l-8 8h16z"/>
+          </g>
+        </g>
 
+        <!-- DOWN Arrow -->
+        <g class="btn-group control-btn" data-action="ALL_DN">
+          <polygon points="80,500 280,500 180,320" class="poly-shape" />
+          <g transform="translate(156, 400) scale(2)">
+            <path class="poly-icon" d="M12 20l8-8H4z"/><path class="poly-icon" d="M12 14l8-8H4z"/>
+          </g>
+        </g>
+
+        <!-- SYNDICATE Center -->
+        <g class="btn-group syndicate-group control-btn" data-action="SYNDICATE">
+          <polygon points="120,200 240,200 240,260 180,320 120,260" class="poly-shape syndicate-shape" />
+          <text x="180" y="235" text-anchor="middle" dominant-baseline="middle" class="poly-text syndicate-text">SYNDICATE</text>
+        </g>
+
+      </svg>
     </main>
 
     <div class="presets">
