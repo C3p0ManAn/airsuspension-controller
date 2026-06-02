@@ -114,107 +114,106 @@ body {
   box-shadow: 0 0 15px var(--neon-cyan);
 }
 
-/* THE EXACT LAYOUT FROM THE DRAFT */
+/* --- THE LOW-POLY CYBERPUNK PUZZLE LAYOUT --- */
 .controller-board {
-  display: grid;
-  grid-template-columns: 80px 100px 80px;
-  grid-template-rows: 90px 110px 90px;
-  gap: 20px;
-  justify-content: center;
-  background: linear-gradient(180deg, #161824 0%, #0d0e15 100%);
-  border-radius: 50px;
-  padding: 40px 20px;
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 15px rgba(0, 243, 255, 0.1);
+  position: relative;
+  width: 360px;
+  height: 500px;
+  background: linear-gradient(180deg, #161824 0%, #0a0b10 100%);
+  border-radius: 60px; /* Outer pill shape */
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 15px rgba(0, 243, 255, 0.1);
   border: 1px solid rgba(255,255,255,0.05);
-  margin-bottom: 25px;
+  margin: 0 auto 25px auto;
 }
 
-.corner-btn {
+/* Base style for all polygonal buttons */
+.poly-btn {
+  position: absolute;
+  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.6));
+  color: var(--text-main);
+  font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: bold;
-  border-radius: 20px;
-  color: var(--text-main);
-  background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(0,0,0,0.5));
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 5px 10px rgba(0,0,0,0.5);
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
-.corner-btn:active {
+/* Hover & Active Effects */
+.poly-btn:hover {
+  background: rgba(0, 243, 255, 0.15);
+}
+.poly-btn:active {
   background: var(--neon-cyan);
   color: #000;
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 20px var(--neon-cyan);
-  transform: scale(0.95);
+  box-shadow: 0 0 30px var(--neon-cyan);
 }
 
-.btn-i { grid-area: 1 / 1 / 2 / 2; border-top-left-radius: 35px; }
-.btn-ii { grid-area: 1 / 3 / 2 / 4; border-top-right-radius: 35px; }
-.btn-iii { grid-area: 3 / 1 / 4 / 2; border-bottom-left-radius: 35px; }
-.btn-iv { grid-area: 3 / 3 / 4 / 4; border-bottom-right-radius: 35px; }
-
-.arrow-btn {
-  border-radius: 25px;
-  border: 1px solid var(--neon-magenta);
-  color: var(--neon-magenta);
-  background: rgba(255, 0, 234, 0.05);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: inset 0 0 10px rgba(255,0,234,0.1);
+/* 1. UP Button (Top Wedge) */
+.btn-up {
+  left: 80px; top: 20px; width: 200px; height: 130px;
+  clip-path: polygon(0% 0%, 100% 0%, 70% 100%, 30% 100%);
 }
+.btn-up:active { background: var(--neon-magenta); }
+.btn-up svg { margin-bottom: 20px; width: 45px; height: 45px; fill: var(--neon-magenta); transition: 0.1s; filter: drop-shadow(0 0 5px var(--neon-magenta)); }
+.btn-up:active svg { fill: #000; filter: none; }
 
-.arrow-btn svg {
-  fill: currentColor;
-  width: 40px;
-  height: 40px;
-  filter: drop-shadow(0 0 5px var(--neon-magenta));
+/* 2. DOWN Button (Bottom Wedge) */
+.btn-down {
+  left: 80px; top: 350px; width: 200px; height: 130px;
+  clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
 }
+.btn-down:active { background: var(--neon-magenta); }
+.btn-down svg { margin-top: 20px; width: 45px; height: 45px; fill: var(--neon-magenta); transition: 0.1s; filter: drop-shadow(0 0 5px var(--neon-magenta)); }
+.btn-down:active svg { fill: #000; filter: none; }
 
-.arrow-btn:active {
-  background: var(--neon-magenta);
-  color: #000;
-  box-shadow: 0 0 25px var(--neon-magenta);
-  transform: scale(0.95);
-}
-
-.arrow-btn:active svg { filter: none; }
-
-.btn-up { grid-area: 1 / 2 / 2 / 3; }
-.btn-down { grid-area: 3 / 2 / 4 / 3; }
-
-.center-wrapper {
-  grid-area: 2 / 1 / 3 / 4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
+/* 3. SYNDICATE Button (Center Shield) */
 .syndicate-btn {
-  width: 140px;
-  height: 80px;
+  left: 120px; top: 200px; width: 120px; height: 100px;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 100%, 0% 50%);
   background: rgba(0, 243, 255, 0.05);
-  border: 1px solid var(--neon-cyan);
-  clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); /* Cyberpunk Hexagon */
   color: var(--neon-cyan);
-  font-weight: 900;
+  font-size: 0.75rem;
   letter-spacing: 2px;
   text-shadow: 0 0 8px var(--neon-cyan);
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
 }
+.syndicate-btn span { margin-top: -15px; font-weight: 900; }
+.syndicate-btn:active { text-shadow: none; }
 
-.syndicate-btn:active {
-  background: var(--neon-cyan);
-  color: #000;
-  text-shadow: none;
-  box-shadow: 0 0 30px var(--neon-cyan);
-  transform: scale(0.95);
+/* 4. BTN_1 (Top Left I) */
+.btn-i {
+  left: 20px; top: 20px; width: 110px; height: 225px;
+  clip-path: polygon(0% 0%, 45.4% 0%, 100% 57.7%, 81.8% 80%, 81.8% 100%, 0% 100%);
 }
+.btn-i span { margin-top: -80px; margin-left: -20px; }
 
+/* 5. BTN_2 (Top Right II) */
+.btn-ii {
+  left: 230px; top: 20px; width: 110px; height: 225px;
+  clip-path: polygon(100% 0%, 54.6% 0%, 0% 57.7%, 18.2% 80%, 18.2% 100%, 100% 100%);
+}
+.btn-ii span { margin-top: -80px; margin-left: 20px; }
+
+/* 6. BTN_3 (Bottom Left III) */
+.btn-iii {
+  left: 20px; top: 255px; width: 110px; height: 225px;
+  clip-path: polygon(0% 0%, 81.8% 0%, 100% 42.2%, 45.4% 100%, 0% 100%);
+}
+.btn-iii span { margin-top: 80px; margin-left: -20px; }
+
+/* 7. BTN_4 (Bottom Right IV) */
+.btn-iv {
+  left: 230px; top: 255px; width: 110px; height: 225px;
+  clip-path: polygon(100% 0%, 18.2% 0%, 0% 42.2%, 54.6% 100%, 100% 100%);
+}
+.btn-iv span { margin-top: 80px; margin-left: 20px; }
+
+/* --- PRESETS --- */
 .presets {
   display: flex;
   justify-content: space-between;
