@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberSuspension Controller</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="status-indicator">
+        <span id="ble-status-dot" class="dot disconnected"></span>
+        <span id="ble-status-text">DISCONNECTED</span>
+      </div>
+      <button id="connect-btn" class="cyber-btn connect-btn">CONNECT BLE</button>
+    </header>
+
+    <main class="controller">
+      <!-- Top Left -->
+      <div class="corner-group">
+        <button class="cyber-btn control-btn" data-action="FL_UP">FL ▲</button>
+        <button class="cyber-btn control-btn" data-action="FL_DN">FL ▼</button>
+      </div>
+
+      <!-- Top Up Arrows -->
+      <button class="cyber-btn control-btn arrow-btn" data-action="ALL_UP">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h16z"/><path d="M12 10l-8 8h16z"/></svg>
+      </button>
+
+      <!-- Top Right -->
+      <div class="corner-group">
+        <button class="cyber-btn control-btn" data-action="FR_UP">FR ▲</button>
+        <button class="cyber-btn control-btn" data-action="FR_DN">FR ▼</button>
+      </div>
+
+      <!-- Middle Center (Logo/Syndicate) -->
+      <div class="center-module">
+        <div class="logo">SYNDICATE</div>
+      </div>
+
+      <!-- Bottom Left -->
+      <div class="corner-group">
+        <button class="cyber-btn control-btn" data-action="RL_UP">RL ▲</button>
+        <button class="cyber-btn control-btn" data-action="RL_DN">RL ▼</button>
+      </div>
+
+      <!-- Bottom Down Arrows -->
+      <button class="cyber-btn control-btn arrow-btn" data-action="ALL_DN">
+        <svg viewBox="0 0 24 24"><path d="M12 20l8-8H4z"/><path d="M12 14l8-8H4z"/></svg>
+      </button>
+
+      <!-- Bottom Right -->
+      <div class="corner-group">
+        <button class="cyber-btn control-btn" data-action="RR_UP">RR ▲</button>
+        <button class="cyber-btn control-btn" data-action="RR_DN">RR ▼</button>
+      </div>
+    </main>
+
+    <div class="presets">
+      <button class="cyber-btn preset-btn" data-preset="1">PRESET 1</button>
+      <button class="cyber-btn preset-btn" data-preset="2">PRESET 2</button>
+      <button class="cyber-btn preset-btn" data-preset="3">PRESET 3</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
