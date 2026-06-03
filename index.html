@@ -2,12 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberSuspension Controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CyberSuspension App</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Dynamic Ambient Edge Lighting Engine -->
+  <div class="ambient-light"></div>
+
   <div class="app-container">
     <header class="header">
       <div class="status-indicator">
@@ -17,79 +20,57 @@
       <button id="connect-btn" class="cyber-btn connect-btn">CONNECT BLE</button>
     </header>
 
-    <main class="controller-board">
-      <svg viewBox="0 0 360 650" class="controller-svg">
-        <defs>
-          <linearGradient id="btn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.08)" />
-            <stop offset="100%" stop-color="rgba(0,0,0,0.6)" />
-          </linearGradient>
-          <linearGradient id="btn-grad-hover" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="rgba(0,243,255,0.2)" />
-            <stop offset="100%" stop-color="rgba(0,0,0,0.6)" />
-          </linearGradient>
-        </defs>
+    <div class="dashboard-stats">
+      <div class="psi-readout">FL: <span class="neon-text">000</span> PSI</div>
+      <div class="psi-readout">FR: <span class="neon-text">000</span> PSI</div>
+      <div class="psi-readout">RL: <span class="neon-text">000</span> PSI</div>
+      <div class="psi-readout">RR: <span class="neon-text">000</span> PSI</div>
+    </div>
 
-        <!-- Top Left (I) -->
-        <g class="btn-group control-btn" data-action="A">
-          <path d="M 0,0 L 100,0 Q 100,90 120,184.4 Q 50,205 0,220 Z" class="poly-shape" />
-          <text x="50" y="100" text-anchor="middle" dominant-baseline="middle" class="poly-text">I</text>
-        </g>
+    <!-- Clean, Hexagonal Wheel Grid -->
+    <main class="control-grid">
+      <!-- Top Left (Front Left) -->
+      <div class="corner fl">
+        <button class="hex-btn corner-up control-btn" data-action="A"><span class="icon">▲</span></button>
+        <div class="corner-label">FL</div>
+        <button class="hex-btn corner-down control-btn" data-action="E"><span class="icon">▼</span></button>
+      </div>
+      
+      <!-- Top Right (Front Right) -->
+      <div class="corner fr">
+        <button class="hex-btn corner-up control-btn" data-action="B"><span class="icon">▲</span></button>
+        <div class="corner-label">FR</div>
+        <button class="hex-btn corner-down control-btn" data-action="F"><span class="icon">▼</span></button>
+      </div>
 
-        <!-- Top Mid (UP) -->
-        <g class="btn-group control-btn" data-action="M">
-          <path d="M 100,0 L 260,0 Q 260,90 240,184.4 Q 210,175 180,180 Q 150,175 120,184.4 Q 100,90 100,0 Z" class="poly-shape" />
-          <path class="poly-icon-stroke" fill="none" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" d="M 145,100 L 180,65 L 215,100 M 145,65 L 180,30 L 215,65" />
-        </g>
+      <!-- Center Control Column -->
+      <div class="center-col">
+        <button class="hex-btn all-up control-btn" data-action="M"><span class="icon">▲▲</span></button>
+        <button class="hex-btn syndicate control-btn" data-action="4">
+          <span class="syn-title">SYNDICATE</span>
+        </button>
+        <button class="hex-btn all-down control-btn" data-action="N"><span class="icon">▼▼</span></button>
+      </div>
 
-        <!-- Top Right (II) -->
-        <g class="btn-group control-btn" data-action="B">
-          <path d="M 260,0 L 360,0 L 360,220 Q 310,205 240,184.4 Q 260,90 260,0 Z" class="poly-shape" />
-          <text x="310" y="100" text-anchor="middle" dominant-baseline="middle" class="poly-text">II</text>
-        </g>
+      <!-- Bottom Left (Rear Left) -->
+      <div class="corner rl">
+        <button class="hex-btn corner-up control-btn" data-action="C"><span class="icon">▲</span></button>
+        <div class="corner-label">RL</div>
+        <button class="hex-btn corner-down control-btn" data-action="G"><span class="icon">▼</span></button>
+      </div>
 
-        <!-- Mid Left Panel -->
-        <g class="btn-group control-btn" data-action="E">
-          <path d="M 0,220 Q 50,205 120,184.4 Q 150,175 180,180 L 110,325 L 180,470 Q 150,475 120,465.5 Q 50,445 0,430 Z" class="poly-shape" />
-        </g>
-
-        <!-- Mid Right Panel -->
-        <g class="btn-group control-btn" data-action="F">
-          <path d="M 360,220 Q 310,205 240,184.4 Q 210,175 180,180 L 250,325 L 180,470 Q 210,475 240,465.5 Q 310,445 360,430 Z" class="poly-shape" />
-        </g>
-
-        <!-- Center Diamond -->
-        <g class="btn-group syndicate-group control-btn" data-action="4">
-          <path d="M 180,180 L 250,325 L 180,470 L 110,325 Z" class="poly-shape syndicate-shape" />
-          <text x="180" y="315" text-anchor="middle" dominant-baseline="middle" class="poly-text syndicate-text" style="font-size: 20px;">SYNDICATE</text>
-          <text x="180" y="340" text-anchor="middle" dominant-baseline="middle" class="poly-text syndicate-text" style="font-size: 14px; letter-spacing: 4px;">GARAGE</text>
-        </g>
-
-        <!-- Bottom Left (III) -->
-        <g class="btn-group control-btn" data-action="C">
-          <path d="M 0,430 Q 50,445 120,465.5 Q 100,560 100,650 L 0,650 Z" class="poly-shape" />
-          <text x="50" y="550" text-anchor="middle" dominant-baseline="middle" class="poly-text">III</text>
-        </g>
-
-        <!-- Bottom Mid (DOWN) -->
-        <g class="btn-group control-btn" data-action="N">
-          <path d="M 120,465.5 Q 150,475 180,470 Q 210,475 240,465.5 Q 260,560 260,650 L 100,650 Q 100,560 120,465.5 Z" class="poly-shape" />
-          <path class="poly-icon-stroke" fill="none" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter" d="M 145,550 L 180,585 L 215,550 M 145,585 L 180,620 L 215,585" />
-        </g>
-
-        <!-- Bottom Right (IV) -->
-        <g class="btn-group control-btn" data-action="D">
-          <path d="M 360,430 Q 310,445 240,465.5 Q 260,560 260,650 L 360,650 Z" class="poly-shape" />
-          <text x="310" y="550" text-anchor="middle" dominant-baseline="middle" class="poly-text">IV</text>
-        </g>
-
-      </svg>
+      <!-- Bottom Right (Rear Right) -->
+      <div class="corner rr">
+        <button class="hex-btn corner-up control-btn" data-action="D"><span class="icon">▲</span></button>
+        <div class="corner-label">RR</div>
+        <button class="hex-btn corner-down control-btn" data-action="H"><span class="icon">▼</span></button>
+      </div>
     </main>
 
     <div class="presets">
-      <button class="cyber-btn preset-btn control-btn" data-action="1">PRESET 1</button>
-      <button class="cyber-btn preset-btn control-btn" data-action="2">PRESET 2</button>
-      <button class="cyber-btn preset-btn control-btn" data-action="3">PRESET 3</button>
+      <button class="preset-btn control-btn" data-action="1">PRST 1</button>
+      <button class="preset-btn control-btn" data-action="2">PRST 2</button>
+      <button class="preset-btn control-btn" data-action="3">PRST 3</button>
     </div>
   </div>
 
