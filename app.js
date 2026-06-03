@@ -160,12 +160,8 @@ controlBtns.forEach(btn => {
     vibrate(20); // Short tactile click
     
     const action = btn.dataset.action;
-    const preset = btn.dataset.preset;
-    
     if (action) {
-      queueCommand(`${action}_ON`);
-    } else if (preset) {
-      queueCommand(`PRESET_${preset}_ON`);
+      queueCommand(action);
     }
   });
 
@@ -177,7 +173,7 @@ controlBtns.forEach(btn => {
     
     const action = btn.dataset.action;
     if (action) {
-      queueCommand(`${action}_OFF`);
+      queueCommand('X');
     }
   };
 
