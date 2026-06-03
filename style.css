@@ -118,9 +118,9 @@ body {
 .controller-board {
   position: relative;
   width: 360px;
-  height: 500px;
+  height: 650px;
   background: #0a0b10;
-  border-radius: 60px; /* Cuts off the sharp corners of the SVG puzzle */
+  border-radius: 180px; /* Makes the pill shape perfectly round at top and bottom */
   box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 15px rgba(0, 243, 255, 0.1);
   border: 1px solid rgba(255,255,255,0.05);
   margin: 0 auto 25px auto;
@@ -181,6 +181,18 @@ body {
 
 .btn-group:active .poly-icon {
   fill: #000;
+  filter: none;
+}
+
+.poly-icon-stroke {
+  stroke: var(--neon-magenta);
+  filter: drop-shadow(0 0 8px var(--neon-magenta));
+  pointer-events: none;
+  transition: all 0.1s ease;
+}
+
+.btn-group:active .poly-icon-stroke {
+  stroke: #000;
   filter: none;
 }
 

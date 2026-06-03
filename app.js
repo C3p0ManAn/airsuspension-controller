@@ -1,3 +1,7 @@
+if (window.location.protocol === 'file:') {
+  alert("WARNING: Web Bluetooth will NOT work when opening the file directly (file:///). You must upload this to GitHub Pages or use a local server for it to find devices!");
+}
+
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 
@@ -51,7 +55,7 @@ async function connectBLE() {
     if (!bluetoothDevice) {
       console.log('Requesting Bluetooth Device...');
       bluetoothDevice = await navigator.bluetooth.requestDevice({
-        filters: [{ namePrefix: 'CyberSuspension' }],
+        acceptAllDevices: true,
         optionalServices: [SERVICE_UUID]
       });
       bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
