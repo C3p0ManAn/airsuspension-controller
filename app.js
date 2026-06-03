@@ -136,7 +136,7 @@ async function processQueue() {
 
 // --- UI SEQUENCE ANIMATION ENGINE ---
 const seqMap = {
-  '1': ['E', 'F', '1'], // Front Down valves + Mode 1
+  '1': ['A', 'B', 'E', 'F', '1'], // True Front Bounce: Up/Down + Mode 1
   '2': ['G', 'H', '2'], // Rear Down valves + Mode 2
   '3': ['E', 'F', 'G', 'H', 'N', '3'], // All Down valves + All Down double arrow + Mode 3
   '4': ['A', 'B', 'C', 'D', 'M', '4']  // All Up valves + All Up double arrow + Syndicate Mode
