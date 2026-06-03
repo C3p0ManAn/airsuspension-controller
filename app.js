@@ -150,22 +150,47 @@ function startUIRoutine(action) {
   stopUIRoutine(); // clear any existing animations
   document.body.classList.add('sequence-overdrive');
   
-  // Find all DOM elements related to this sequence
-  currentAnimatedTargets = seqMap[action]
-    .map(act => document.querySelector(`[data-action="${act}"]`))
-    .filter(el => el !== null);
-  
-  let isOn = true;
-  currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
-  
-  // Pulse the UI buttons every 400ms to perfectly match the ESP32 physical relays!
-  sequenceInterval = setInterval(() => {
-    isOn = !isOn;
-    currentAnimatedTargets.forEach(t => {
-      if (isOn) t.classList.add('is-active');
-      else t.classList.remove('is-active');
-    });
-  }, 400); 
+  if (action === '1') {
+    // DANCING MODE: Alternate UP and DOWN every 200ms
+    const upBtns = ['A', 'B'].map(act => document.querySelector(`[data-action="${act}"]`)).filter(el => el !== null);
+    const downBtns = ['E', 'F'].map(act => document.querySelector(`[data-action="${act}"]`)).filter(el => el !== null);
+    const modeBtn = document.querySelector(`[data-action="1"]`);
+    
+    currentAnimatedTargets = [...upBtns, ...downBtns, modeBtn].filter(el => el !== null);
+    
+    let isUp = true;
+    if (modeBtn) modeBtn.classList.add('is-active');
+    upBtns.forEach(t => t.classList.add('is-active'));
+    downBtns.forEach(t => t.classList.remove('is-active'));
+    
+    sequenceInterval = setInterval(() => {
+      isUp = !isUp;
+      if (isUp) {
+        upBtns.forEach(t => t.classList.add('is-active'));
+        downBtns.forEach(t => t.classList.remove('is-active'));
+      } else {
+        upBtns.forEach(t => t.classList.remove('is-active'));
+        downBtns.forEach(t => t.classList.add('is-active'));
+      }
+    }, 200);
+    
+  } else {
+    // STANDARD PULSE MODE: Every 400ms
+    currentAnimatedTargets = seqMap[action]
+      .map(act => document.querySelector(`[data-action="${act}"]`))
+      .filter(el => el !== null);
+    
+    let isOn = true;
+    currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
+    
+    sequenceInterval = setInterval(() => {
+      isOn = !isOn;
+      currentAnimatedTargets.forEach(t => {
+        if (isOn) t.classList.add('is-active');
+        else t.classList.remove('is-active');
+      });
+    }, 400); 
+  }
   
   sequenceTimeout = setTimeout(() => {
     stopUIRoutine();
