@@ -82,6 +82,18 @@ async function connectBLE() {
   }
 }
 
+function onConnected() {
+  statusText.innerText = 'CONNECTED';
+  statusDot.classList.add('connected');
+  connectBtn.innerText = 'DISCONNECT';
+  connectBtn.classList.add('active');
+  
+  // Sync custom delay setting to ESP32
+  setTimeout(() => {
+    if (typeof modeDelay !== 'undefined') queueCommand(`*D${modeDelay}`);
+  }, 500);
+}
+
 function onDisconnected() {
   statusText.innerText = 'DISCONNECTED';
   statusDot.classList.remove('connected');
@@ -263,10 +275,143 @@ function handleRelease(btn, e) {
       delete safetyTimeouts[action];
     }
     
-    if (!['1', '2', '3', '4'].includes(action)) {
+    if (!['1', '2', '3', '4'].includes(action) && action !== 'gyro') {
       queueCommand('-' + action);
     }
     document.body.classList.remove('light-active');
+  }
+}
+
+// --- GYRO & SETTINGS ENGINE ---
+const gyroBtn = document.getElementById('gyro-btn');
+const passcodeModal = document.getElementById('passcode-modal');
+const passcodeInput = document.getElementById('passcode-input');
+const passcodeSubmit = document.getElementById('passcode-submit');
+const passcodeCancel = document.getElementById('passcode-cancel');
+
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const settingsClose = document.getElementById('settings-close');
+const deadzoneSlider = document.getElementById('deadzone-slider');
+const delaySlider = document.getElementById('delay-slider');
+const deadzoneVal = document.getElementById('deadzone-val');
+const delayVal = document.getElementById('delay-val');
+
+let gyroDeadzone = parseInt(localStorage.getItem('gyroDeadzone')) || 15;
+let modeDelay = parseInt(localStorage.getItem('modeDelay')) || 200;
+
+deadzoneSlider.value = gyroDeadzone;
+deadzoneVal.innerText = gyroDeadzone;
+delaySlider.value = modeDelay;
+delayVal.innerText = modeDelay;
+
+// Settings Logic
+settingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+settingsClose.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+deadzoneSlider.addEventListener('input', (e) => {
+  gyroDeadzone = parseInt(e.target.value);
+  deadzoneVal.innerText = gyroDeadzone;
+  localStorage.setItem('gyroDeadzone', gyroDeadzone);
+});
+
+delaySlider.addEventListener('input', (e) => {
+  modeDelay = parseInt(e.target.value);
+  delayVal.innerText = modeDelay;
+  localStorage.setItem('modeDelay', modeDelay);
+  if (controlCharacteristic) queueCommand(`*D${modeDelay}`);
+});
+
+// Gyro Logic
+let gyroActive = false;
+let currentGyroState = { pitch: 0, roll: 0 };
+let lastGyroSendTime = 0;
+
+gyroBtn.addEventListener('click', () => {
+  if (gyroActive) disableGyro();
+  else {
+    passcodeModal.classList.remove('hidden');
+    passcodeInput.value = '';
+    passcodeInput.focus();
+  }
+});
+
+passcodeCancel.addEventListener('click', () => passcodeModal.classList.add('hidden'));
+
+passcodeSubmit.addEventListener('click', () => {
+  if (passcodeInput.value === '1234') {
+    passcodeModal.classList.add('hidden');
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if (state === 'granted') enableGyro();
+        else alert('Gyro permission denied by iOS.');
+      }).catch(console.error);
+    } else enableGyro();
+  } else {
+    passcodeInput.style.borderColor = 'red';
+    setTimeout(() => passcodeInput.style.borderColor = 'var(--neon-red)', 500);
+  }
+});
+
+function enableGyro() {
+  gyroActive = true;
+  gyroBtn.classList.add('is-active');
+  document.body.classList.add('sequence-overdrive');
+  window.addEventListener('deviceorientation', handleGyro);
+}
+
+function disableGyro() {
+  gyroActive = false;
+  gyroBtn.classList.remove('is-active');
+  document.body.classList.remove('sequence-overdrive');
+  window.removeEventListener('deviceorientation', handleGyro);
+  
+  // Stop all gyro valves
+  if (currentGyroState.pitch === 1) { queueCommand('-K'); queueCommand('-J'); }
+  else if (currentGyroState.pitch === -1) { queueCommand('-I'); queueCommand('-L'); }
+  if (currentGyroState.roll === 1) { queueCommand('-A'); queueCommand('-C'); queueCommand('-F'); queueCommand('-H'); }
+  else if (currentGyroState.roll === -1) { queueCommand('-B'); queueCommand('-D'); queueCommand('-E'); queueCommand('-G'); }
+  currentGyroState = { pitch: 0, roll: 0 };
+  
+  // Auto-Drop Sequence
+  queueCommand('+N');
+  setTimeout(() => queueCommand('-N'), 3000);
+}
+
+function handleGyro(e) {
+  if (!gyroActive || !controlCharacteristic) return;
+  if (Date.now() - lastGyroSendTime < 50) return; // 50ms throttle
+  
+  const pitch = e.beta; // Front/Back tilt
+  const roll = e.gamma; // Left/Right tilt
+  
+  let newPitchState = 0;
+  if (pitch > gyroDeadzone) newPitchState = -1; // Pitch Back
+  else if (pitch < -gyroDeadzone) newPitchState = 1; // Pitch Forward
+  
+  let newRollState = 0;
+  if (roll > gyroDeadzone) newRollState = 1; // Roll Right
+  else if (roll < -gyroDeadzone) newRollState = -1; // Roll Left
+  
+  if (newPitchState !== currentGyroState.pitch || newRollState !== currentGyroState.roll) {
+    if (newPitchState !== currentGyroState.pitch) {
+       if (currentGyroState.pitch === 1) { queueCommand('-K'); queueCommand('-J'); }
+       else if (currentGyroState.pitch === -1) { queueCommand('-I'); queueCommand('-L'); }
+       
+       if (newPitchState === 1) { queueCommand('+K'); queueCommand('+J'); }
+       else if (newPitchState === -1) { queueCommand('+I'); queueCommand('+L'); }
+       currentGyroState.pitch = newPitchState;
+    }
+    
+    if (newRollState !== currentGyroState.roll) {
+       if (currentGyroState.roll === 1) { queueCommand('-A'); queueCommand('-C'); queueCommand('-F'); queueCommand('-H'); }
+       else if (currentGyroState.roll === -1) { queueCommand('-B'); queueCommand('-D'); queueCommand('-E'); queueCommand('-G'); }
+       
+       if (newRollState === 1) { queueCommand('+A'); queueCommand('+C'); queueCommand('+F'); queueCommand('+H'); }
+       else if (newRollState === -1) { queueCommand('+B'); queueCommand('+D'); queueCommand('+E'); queueCommand('+G'); }
+       currentGyroState.roll = newRollState;
+    }
+    lastGyroSendTime = Date.now();
   }
 }
 

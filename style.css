@@ -261,3 +261,65 @@ body.sequence-overdrive .ambient-light {
   border-color: var(--neon-red);
   box-shadow: 0 0 20px var(--neon-red);
 }
+
+/* --- MODALS --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.modal-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.modal-box {
+  background: rgba(20, 10, 10, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 0, 51, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 320px;
+  text-align: center;
+}
+#passcode-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--neon-red);
+  color: var(--neon-white);
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  text-align: center;
+  padding: 10px 0;
+  letter-spacing: 15px;
+  border-radius: 8px;
+  outline: none;
+}
+.setting-group {
+  margin: 20px 0;
+  text-align: left;
+}
+.setting-group label {
+  display: block;
+  font-family: var(--font-body);
+  color: #ccc;
+  margin-bottom: 8px;
+}
+.setting-group span {
+  color: var(--neon-white);
+  font-weight: bold;
+}
+input[type=range] {
+  width: 100%;
+  accent-color: var(--neon-red);
+}

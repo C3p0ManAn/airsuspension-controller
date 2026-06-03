@@ -13,6 +13,7 @@
 
   <div class="app-container">
     <header class="header">
+      <button id="settings-btn" style="background:transparent; border:none; color:var(--neon-white); font-size:1.5rem; cursor:pointer; filter:drop-shadow(0 0 5px rgba(255,255,255,0.5));">⚙</button>
       <div class="status-indicator">
         <span id="ble-status-dot" class="dot disconnected"></span>
         <span id="ble-status-text">DISCONNECTED</span>
@@ -64,6 +65,36 @@
       <button class="preset-btn control-btn" data-action="1">MODE 1</button>
       <button class="preset-btn control-btn" data-action="2">MODE 2</button>
       <button class="preset-btn control-btn" data-action="3">MODE 3</button>
+      <button id="gyro-btn" class="preset-btn" style="color:var(--neon-red); border-color:var(--neon-red);">GYRO</button>
+    </div>
+  </div>
+
+  <!-- Passcode Modal -->
+  <div id="passcode-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 style="color:var(--neon-red); margin-bottom: 20px; font-family:var(--font-heading);">PASSCODE</h2>
+      <input type="password" id="passcode-input" maxlength="4" placeholder="••••">
+      <button id="passcode-submit" class="connect-btn" style="margin-top:20px; width:100%;">UNLOCK</button>
+      <button id="passcode-cancel" class="connect-btn" style="margin-top:10px; width:100%; border-color:#555; color:#aaa;">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2 style="color:var(--neon-white); margin-bottom: 20px; font-family:var(--font-heading);">SYSTEM SETUP</h2>
+      
+      <div class="setting-group">
+        <label>Gyro Deadzone: <span id="deadzone-val">15</span>°</label>
+        <input type="range" id="deadzone-slider" min="5" max="45" value="15">
+      </div>
+      
+      <div class="setting-group">
+        <label>Mode 1 Delay: <span id="delay-val">200</span>ms</label>
+        <input type="range" id="delay-slider" min="50" max="800" step="10" value="200">
+      </div>
+      
+      <button id="settings-close" class="connect-btn" style="margin-top:25px; width:100%;">SAVE & CLOSE</button>
     </div>
   </div>
 
