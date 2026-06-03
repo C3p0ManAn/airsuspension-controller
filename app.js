@@ -168,7 +168,9 @@ controlBtns.forEach(btn => {
     
     const action = btn.dataset.action;
     if (action) {
-      queueCommand('X');
+      if (!['1', '2', '3', '4'].includes(action)) {
+        queueCommand('X');
+      }
       // Turn off normal flare on release
       document.body.classList.remove('light-active');
     }
