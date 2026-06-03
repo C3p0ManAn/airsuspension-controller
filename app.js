@@ -186,13 +186,15 @@ function stopUIRoutine() {
 
 // --- BULLETPROOF MOBILE MULTI-TOUCH ENGINE ---
 const controlBtns = document.querySelectorAll('.control-btn');
+let safetyTimeouts = {};
 
 function handlePress(btn, e) {
   // Prevents mobile browsers from triggering fake clicks/scrolls that break multi-touch
   if (e.cancelable) e.preventDefault();
   
-  // Ignore if already pressed (unless it's a mode button which might trigger a sequence refresh)
-  if (btn.classList.contains('is-active') && !['1', '2', '3', '4'].includes(btn.dataset.action)) return;
+  // Use a dedicated data attribute to track manual touches, preventing interference with visual animations
+  if (btn.dataset.touched === 'true') return;
+  btn.dataset.touched = 'true';
   
   btn.classList.add('is-active');
   vibrate(20); 
@@ -205,13 +207,24 @@ function handlePress(btn, e) {
       startUIRoutine(action);
     } else {
       stopUIRoutine(); // Instantly kill mode sequence visuals & ambient light if manual button is touched!
+      btn.classList.add('is-active'); // Ensure the button stays visually active even if it was part of the stopped sequence
       document.body.classList.add('light-active');
+      
+      // Sync UI with ESP32's 5-second hardware safety limit
+      if (safetyTimeouts[action]) clearTimeout(safetyTimeouts[action]);
+      safetyTimeouts[action] = setTimeout(() => {
+        btn.classList.remove('is-active');
+        document.body.classList.remove('light-active');
+        btn.dataset.touched = 'false';
+      }, 5000);
     }
   }
 }
 
 function handleRelease(btn, e) {
   if (e.cancelable) e.preventDefault();
+  
+  btn.dataset.touched = 'false';
   
   // Only remove active state if it's NOT currently being animated by a sequence
   if (!currentAnimatedTargets.includes(btn)) {
@@ -220,6 +233,11 @@ function handleRelease(btn, e) {
   
   const action = btn.dataset.action;
   if (action) {
+    if (safetyTimeouts[action]) {
+      clearTimeout(safetyTimeouts[action]);
+      delete safetyTimeouts[action];
+    }
+    
     if (!['1', '2', '3', '4'].includes(action)) {
       queueCommand('-' + action);
     }
