@@ -163,12 +163,12 @@ body.sequence-overdrive .ambient-light {
   z-index: 1;
 }
 
-.hex-btn:active {
+.hex-btn.is-active {
   background: var(--neon-red);
   color: #000;
   transform: scale(0.92);
 }
-.hex-btn:active::after {
+.hex-btn.is-active::after {
   background: var(--neon-red);
 }
 
@@ -192,7 +192,7 @@ body.sequence-overdrive .ambient-light {
   letter-spacing: 1px;
   z-index: 2;
 }
-.syndicate:active .syn-title { color: #000; text-shadow: none; }
+.syndicate.is-active .syn-title { color: #000; text-shadow: none; }
 
 .icon {
   z-index: 2;
@@ -222,7 +222,7 @@ body.sequence-overdrive .ambient-light {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.preset-btn:active {
+.preset-btn.is-active {
   background: var(--neon-red);
   color: #000;
   border-color: var(--neon-red);

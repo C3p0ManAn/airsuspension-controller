@@ -139,6 +139,7 @@ controlBtns.forEach(btn => {
   btn.addEventListener('pointerdown', (e) => {
     if(e.cancelable) e.preventDefault(); 
     btn.setPointerCapture(e.pointerId); 
+    btn.classList.add('is-active');
     
     vibrate(20); 
     
@@ -165,6 +166,7 @@ controlBtns.forEach(btn => {
     if(btn.hasPointerCapture(e.pointerId)) {
       btn.releasePointerCapture(e.pointerId);
     }
+    btn.classList.remove('is-active');
     
     const action = btn.dataset.action;
     if (action) {
