@@ -90,6 +90,7 @@ function onDisconnected() {
   controlCharacteristic = null;
   releaseWakeLock();
   commandQueue = []; 
+  stopUIRoutine();
 }
 
 connectBtn.addEventListener('click', () => {
@@ -133,51 +134,107 @@ async function processQueue() {
   }
 }
 
+// --- UI SEQUENCE ANIMATION ENGINE ---
+const seqMap = {
+  '1': ['E', 'F', '1'], // Front Down valves + Mode 1
+  '2': ['G', 'H', '2'], // Rear Down valves + Mode 2
+  '3': ['E', 'F', 'G', 'H', 'N', '3'], // All Down valves + All Down double arrow + Mode 3
+  '4': ['A', 'B', 'C', 'D', 'M', '4']  // All Up valves + All Up double arrow + Syndicate Mode
+};
+
+let sequenceInterval = null;
+let sequenceTimeout = null;
+let currentAnimatedTargets = [];
+
+function startUIRoutine(action) {
+  stopUIRoutine(); // clear any existing animations
+  document.body.classList.add('sequence-overdrive');
+  
+  // Find all DOM elements related to this sequence
+  currentAnimatedTargets = seqMap[action]
+    .map(act => document.querySelector(`[data-action="${act}"]`))
+    .filter(el => el !== null);
+  
+  let isOn = true;
+  currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
+  
+  // Pulse the UI buttons every 400ms to perfectly match the ESP32 physical relays!
+  sequenceInterval = setInterval(() => {
+    isOn = !isOn;
+    currentAnimatedTargets.forEach(t => {
+      if (isOn) t.classList.add('is-active');
+      else t.classList.remove('is-active');
+    });
+  }, 400); 
+  
+  sequenceTimeout = setTimeout(() => {
+    stopUIRoutine();
+  }, 3500);
+}
+
+function stopUIRoutine() {
+  if (sequenceInterval) clearInterval(sequenceInterval);
+  if (sequenceTimeout) clearTimeout(sequenceTimeout);
+  sequenceInterval = null;
+  sequenceTimeout = null;
+  document.body.classList.remove('sequence-overdrive');
+  
+  // Clear red glow from all animated buttons
+  currentAnimatedTargets.forEach(t => t.classList.remove('is-active'));
+  currentAnimatedTargets = [];
+}
+
+// --- BULLETPROOF MOBILE MULTI-TOUCH ENGINE ---
 const controlBtns = document.querySelectorAll('.control-btn');
 
-controlBtns.forEach(btn => {
-  btn.addEventListener('pointerdown', (e) => {
-    if(e.cancelable) e.preventDefault(); 
-    btn.setPointerCapture(e.pointerId); 
-    btn.classList.add('is-active');
-    
-    vibrate(20); 
-    
-    const action = btn.dataset.action;
-    if (action) {
-      queueCommand('+' + action);
+function handlePress(btn, e) {
+  // Prevents mobile browsers from triggering fake clicks/scrolls that break multi-touch
+  if (e.cancelable) e.preventDefault();
+  
+  // Ignore if already pressed (unless it's a mode button which might trigger a sequence refresh)
+  if (btn.classList.contains('is-active') && !['1', '2', '3', '4'].includes(btn.dataset.action)) return;
+  
+  btn.classList.add('is-active');
+  vibrate(20); 
+  
+  const action = btn.dataset.action;
+  if (action) {
+    queueCommand('+' + action);
 
-      // --- AMBIENT LIGHT ENGINE ---
-      // If sequence (1,2,3,4), trigger overdrive light for 3.5s
-      if (['1', '2', '3', '4'].includes(action)) {
-        document.body.classList.add('sequence-overdrive');
-        setTimeout(() => {
-          document.body.classList.remove('sequence-overdrive');
-        }, 3500); 
-      } else {
-        // Normal button press flare
-        document.body.classList.add('light-active');
-      }
+    if (['1', '2', '3', '4'].includes(action)) {
+      startUIRoutine(action);
+    } else {
+      stopUIRoutine(); // Instantly kill mode sequence visuals & ambient light if manual button is touched!
+      document.body.classList.add('light-active');
     }
-  });
+  }
+}
 
-  const handleRelease = (e) => {
-    if(e.cancelable) e.preventDefault();
-    if(btn.hasPointerCapture(e.pointerId)) {
-      btn.releasePointerCapture(e.pointerId);
-    }
+function handleRelease(btn, e) {
+  if (e.cancelable) e.preventDefault();
+  
+  // Only remove active state if it's NOT currently being animated by a sequence
+  if (!currentAnimatedTargets.includes(btn)) {
     btn.classList.remove('is-active');
-    
-    const action = btn.dataset.action;
-    if (action) {
-      if (!['1', '2', '3', '4'].includes(action)) {
-        queueCommand('-' + action);
-      }
-      // Turn off normal flare on release
-      document.body.classList.remove('light-active');
+  }
+  
+  const action = btn.dataset.action;
+  if (action) {
+    if (!['1', '2', '3', '4'].includes(action)) {
+      queueCommand('-' + action);
     }
-  };
+    document.body.classList.remove('light-active');
+  }
+}
 
-  btn.addEventListener('pointerup', handleRelease);
-  btn.addEventListener('pointercancel', handleRelease);
+controlBtns.forEach(btn => {
+  // Touch Events are mandatory for flawless multi-touch on iOS Safari and Chrome Android
+  btn.addEventListener('touchstart', (e) => handlePress(btn, e), {passive: false});
+  btn.addEventListener('touchend', (e) => handleRelease(btn, e), {passive: false});
+  btn.addEventListener('touchcancel', (e) => handleRelease(btn, e), {passive: false});
+  
+  // Fallback to standard Mouse Events for Desktop browser testing
+  btn.addEventListener('mousedown', (e) => handlePress(btn, e));
+  btn.addEventListener('mouseup', (e) => handleRelease(btn, e));
+  btn.addEventListener('mouseleave', (e) => handleRelease(btn, e));
 });
