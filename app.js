@@ -320,6 +320,7 @@ const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
 const settingsClose = document.getElementById('settings-close');
 const deadzoneSlider = document.getElementById('deadzone-slider');
+const deadzoneVal = document.getElementById('deadzone-val');
 const delay1Slider = document.getElementById('delay1-slider');
 const delay2Slider = document.getElementById('delay2-slider');
 const delay3Slider = document.getElementById('delay3-slider');
