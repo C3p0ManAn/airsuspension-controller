@@ -160,9 +160,9 @@ let currentAnimatedTargets = [];
 
 function startUIRoutine(action) {
   stopUIRoutine(); // clear any existing animations
-  document.body.classList.add('sequence-overdrive');
   
   if (action === '1') {
+    document.body.classList.add('sequence-overdrive');
     // DANCING MODE: Alternate UP and DOWN every 200ms
     const upBtns = ['A', 'B'].map(act => document.querySelector(`[data-action="${act}"]`)).filter(el => el !== null);
     const downBtns = ['E', 'F'].map(act => document.querySelector(`[data-action="${act}"]`)).filter(el => el !== null);
@@ -187,21 +187,13 @@ function startUIRoutine(action) {
     }, 200);
     
   } else {
-    // STANDARD PULSE MODE: Every 400ms
+    // STANDARD STATIC MODE
+    document.body.classList.add('light-active');
     currentAnimatedTargets = seqMap[action]
       .map(act => document.querySelector(`[data-action="${act}"]`))
       .filter(el => el !== null);
     
-    let isOn = true;
     currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
-    
-    sequenceInterval = setInterval(() => {
-      isOn = !isOn;
-      currentAnimatedTargets.forEach(t => {
-        if (isOn) t.classList.add('is-active');
-        else t.classList.remove('is-active');
-      });
-    }, 400); 
   }
   
   sequenceTimeout = setTimeout(() => {
@@ -215,6 +207,7 @@ function stopUIRoutine() {
   sequenceInterval = null;
   sequenceTimeout = null;
   document.body.classList.remove('sequence-overdrive');
+  document.body.classList.remove('light-active');
   
   // Clear red glow from all animated buttons
   currentAnimatedTargets.forEach(t => t.classList.remove('is-active'));
@@ -356,14 +349,13 @@ passcodeSubmit.addEventListener('click', () => {
 function enableGyro() {
   gyroActive = true;
   gyroBtn.classList.add('is-active');
-  document.body.classList.add('sequence-overdrive');
   window.addEventListener('deviceorientation', handleGyro);
 }
 
 function disableGyro() {
   gyroActive = false;
   gyroBtn.classList.remove('is-active');
-  document.body.classList.remove('sequence-overdrive');
+  document.body.classList.remove('gyro-overdrive');
   window.removeEventListener('deviceorientation', handleGyro);
   
   // Stop all gyro valves
@@ -371,6 +363,9 @@ function disableGyro() {
   else if (currentGyroState.pitch === -1) { queueCommand('-I'); queueCommand('-L'); }
   if (currentGyroState.roll === 1) { queueCommand('-A'); queueCommand('-C'); queueCommand('-F'); queueCommand('-H'); }
   else if (currentGyroState.roll === -1) { queueCommand('-B'); queueCommand('-D'); queueCommand('-E'); queueCommand('-G'); }
+  
+  // Clear UI
+  ['A','B','C','D','E','F','G','H'].forEach(act => document.querySelector(`[data-action="${act}"]`)?.classList.remove('is-active'));
   currentGyroState = { pitch: 0, roll: 0 };
   
   // Auto-Drop Sequence
@@ -393,24 +388,51 @@ function handleGyro(e) {
   if (roll > gyroDeadzone) newRollState = 1; // Roll Right
   else if (roll < -gyroDeadzone) newRollState = -1; // Roll Left
   
+  const getPitchUI = (state) => {
+    if (state === 1) return ['E', 'F', 'C', 'D']; // Front Down, Rear Up
+    if (state === -1) return ['A', 'B', 'G', 'H']; // Front Up, Rear Down
+    return [];
+  };
+  
+  const getRollUI = (state) => {
+    if (state === 1) return ['A', 'C', 'F', 'H']; // Left Up, Right Down
+    if (state === -1) return ['B', 'D', 'E', 'G']; // Right Up, Left Down
+    return [];
+  };
+
   if (newPitchState !== currentGyroState.pitch || newRollState !== currentGyroState.roll) {
     if (newPitchState !== currentGyroState.pitch) {
+       getPitchUI(currentGyroState.pitch).forEach(act => document.querySelector(`[data-action="${act}"]`)?.classList.remove('is-active'));
+       
        if (currentGyroState.pitch === 1) { queueCommand('-K'); queueCommand('-J'); }
        else if (currentGyroState.pitch === -1) { queueCommand('-I'); queueCommand('-L'); }
        
        if (newPitchState === 1) { queueCommand('+K'); queueCommand('+J'); }
        else if (newPitchState === -1) { queueCommand('+I'); queueCommand('+L'); }
+       
+       getPitchUI(newPitchState).forEach(act => document.querySelector(`[data-action="${act}"]`)?.classList.add('is-active'));
        currentGyroState.pitch = newPitchState;
     }
     
     if (newRollState !== currentGyroState.roll) {
+       getRollUI(currentGyroState.roll).forEach(act => document.querySelector(`[data-action="${act}"]`)?.classList.remove('is-active'));
+       
        if (currentGyroState.roll === 1) { queueCommand('-A'); queueCommand('-C'); queueCommand('-F'); queueCommand('-H'); }
        else if (currentGyroState.roll === -1) { queueCommand('-B'); queueCommand('-D'); queueCommand('-E'); queueCommand('-G'); }
        
        if (newRollState === 1) { queueCommand('+A'); queueCommand('+C'); queueCommand('+F'); queueCommand('+H'); }
        else if (newRollState === -1) { queueCommand('+B'); queueCommand('+D'); queueCommand('+E'); queueCommand('+G'); }
+       
+       getRollUI(newRollState).forEach(act => document.querySelector(`[data-action="${act}"]`)?.classList.add('is-active'));
        currentGyroState.roll = newRollState;
     }
+    
+    if (currentGyroState.pitch !== 0 || currentGyroState.roll !== 0) {
+       document.body.classList.add('gyro-overdrive');
+    } else {
+       document.body.classList.remove('gyro-overdrive');
+    }
+    
     lastGyroSendTime = Date.now();
   }
 }

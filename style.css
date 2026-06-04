@@ -47,9 +47,18 @@ body.sequence-overdrive .ambient-light {
   animation: neon-strobe 0.4s ease-in-out infinite alternate;
 }
 
+body.gyro-overdrive .ambient-light {
+  animation: gyro-pulse 0.4s ease-in-out infinite alternate;
+}
+
 @keyframes neon-strobe {
   0% { box-shadow: inset 0 0 150px rgba(255, 255, 255, 0.5); background: rgba(255,255,255,0.05); }
   100% { box-shadow: inset 0 0 30px rgba(255, 0, 51, 0.1); background: transparent; }
+}
+
+@keyframes gyro-pulse {
+  0% { box-shadow: inset 0 0 120px rgba(255, 0, 51, 0.5); background: rgba(255,0,51,0.05); }
+  100% { box-shadow: inset 0 0 20px rgba(255, 0, 51, 0.1); background: transparent; }
 }
 
 /* --- MAIN CONTAINER --- */
@@ -130,8 +139,10 @@ body.sequence-overdrive .ambient-light {
   gap: 15px;
   align-items: stretch;
   justify-items: center;
-  padding-top: 15vh;
-  padding-bottom: 18vh;
+  padding-top: 12vh;
+  padding-bottom: 22vh;
+  padding-left: 5%;
+  padding-right: 5%;
   box-sizing: border-box;
 }
 
@@ -163,13 +174,15 @@ body.sequence-overdrive .ambient-light {
 /* Sci-Fi Octagonal Buttons */
 .presets {
   position: absolute;
-  bottom: 0; width: 100%;
-  padding: 15px 10px 30px 10px;
+  bottom: 6%; 
+  left: 5%; width: 90%;
+  padding: 15px 10px;
+  border-radius: 15px;
   background: rgba(15, 10, 10, 0.45);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: space-evenly;
   gap: 10px;
