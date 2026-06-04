@@ -187,22 +187,34 @@ function startUIRoutine(action) {
     }, modeDelay); // Sync to user's dynamic MS setting
     
   } else {
-    // STANDARD PULSE MODE: Every 400ms
+    // HYBRID PULSE MODE: Every 400ms
     document.body.classList.add('sequence-overdrive');
-    currentAnimatedTargets = seqMap[action]
+    
+    // Separate the Mode button from the Valve buttons
+    const modeBtn = document.querySelector(`[data-action="${action}"]`);
+    const valveTargets = seqMap[action]
+      .filter(act => act !== action) // Remove the mode button from the pulse list
       .map(act => document.querySelector(`[data-action="${act}"]`))
       .filter(el => el !== null);
     
+    // 1. Make mode button STATIC red
+    if (modeBtn) modeBtn.classList.add('is-active');
+    
+    // 2. Make valve buttons PULSE
     let isOn = true;
-    currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
+    valveTargets.forEach(t => t.classList.add('is-active'));
     
     sequenceInterval = setInterval(() => {
       isOn = !isOn;
-      currentAnimatedTargets.forEach(t => {
+      valveTargets.forEach(t => {
         if (isOn) t.classList.add('is-active');
         else t.classList.remove('is-active');
       });
     }, 400); 
+    
+    // Store all of them in currentAnimatedTargets for cleanup
+    currentAnimatedTargets = [...valveTargets];
+    if (modeBtn) currentAnimatedTargets.push(modeBtn);
   }
   
   sequenceTimeout = setTimeout(() => {
