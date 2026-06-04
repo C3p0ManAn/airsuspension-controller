@@ -61,6 +61,16 @@ body.gyro-overdrive .ambient-light {
   100% { box-shadow: inset 0 0 20px rgba(255, 0, 51, 0.1); background: transparent; }
 }
 
+/* --- GYRO LOCKOUT --- */
+body.gyro-lock .control-btn {
+  pointer-events: none; /* Physically prevents clicks/touches on all control buttons */
+}
+body.gyro-lock .preset-btn.control-btn {
+  opacity: 0.3;
+  filter: grayscale(100%);
+  transition: all 0.4s;
+}
+
 /* --- MAIN CONTAINER --- */
 .app-container {
   width: 100%;

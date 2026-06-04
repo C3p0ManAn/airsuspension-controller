@@ -243,6 +243,9 @@ function handlePress(btn, e) {
   // Prevents mobile browsers from triggering fake clicks/scrolls that break multi-touch
   if (e.cancelable) e.preventDefault();
   
+  // Safely block all manual inputs if Gyro is currently flying the car
+  if (gyroActive) return;
+  
   // Use a dedicated data attribute to track manual touches, preventing interference with visual animations
   if (btn.dataset.touched === 'true') return;
   btn.dataset.touched = 'true';
@@ -274,6 +277,7 @@ function handlePress(btn, e) {
 
 function handleRelease(btn, e) {
   if (e.cancelable) e.preventDefault();
+  if (gyroActive) return;
   
   btn.dataset.touched = 'false';
   
@@ -370,6 +374,7 @@ passcodeSubmit.addEventListener('click', () => {
 function enableGyro() {
   gyroActive = true;
   gyroBtn.classList.add('is-active');
+  document.body.classList.add('gyro-lock');
   window.addEventListener('deviceorientation', handleGyro);
 }
 
@@ -377,6 +382,7 @@ function disableGyro() {
   gyroActive = false;
   gyroBtn.classList.remove('is-active');
   document.body.classList.remove('gyro-overdrive');
+  document.body.classList.remove('gyro-lock');
   window.removeEventListener('deviceorientation', handleGyro);
   
   // Stop all gyro valves
