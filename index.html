@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CyberSuspension App</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -92,6 +92,14 @@
       </div>
       
       <div class="setting-group">
+        <label>Mode Behavior:</label>
+        <select id="mode-behavior-select" class="cyber-select">
+          <option value="0">PUSH (3.5s Auto)</option>
+          <option value="1">HOLD (Infinite)</option>
+        </select>
+      </div>
+      
+      <div class="setting-group">
         <label>Mode 1 Delay: <span id="delay1-val">200</span>ms</label>
         <input type="range" id="delay1-slider" min="50" max="800" step="10" value="200">
       </div>
@@ -115,6 +123,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

@@ -90,6 +90,7 @@ function onConnected() {
   
   // Sync custom delay setting to ESP32
   setTimeout(() => {
+    if (typeof modeBehavior !== 'undefined') queueCommand(`*M:${modeBehavior}`);
     if (typeof mode1Delay !== 'undefined') queueCommand(`*1:${mode1Delay}`);
     if (typeof mode2Delay !== 'undefined') queueCommand(`*2:${mode2Delay}`);
     if (typeof mode3Delay !== 'undefined') queueCommand(`*3:${mode3Delay}`);
@@ -226,9 +227,11 @@ function startUIRoutine(action) {
     if (modeBtn) currentAnimatedTargets.push(modeBtn);
   }
   
-  sequenceTimeout = setTimeout(() => {
-    stopUIRoutine();
-  }, 3500);
+  if (modeBehavior === 0) {
+    sequenceTimeout = setTimeout(() => {
+      stopUIRoutine();
+    }, 3500);
+  }
 }
 
 function stopUIRoutine() {
@@ -304,6 +307,10 @@ function handleRelease(btn, e) {
     
     if (!['1', '2', '3', '4'].includes(action) && action !== 'gyro') {
       queueCommand('-' + action);
+    } else if (['1', '2', '3', '4'].includes(action) && modeBehavior === 1) {
+      // If we are in HOLD mode, releasing the mode button stops it
+      queueCommand('-' + action);
+      stopUIRoutine();
     }
     document.body.classList.remove('light-active');
   }
@@ -319,6 +326,7 @@ const passcodeCancel = document.getElementById('passcode-cancel');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
 const settingsClose = document.getElementById('settings-close');
+const modeBehaviorSelect = document.getElementById('mode-behavior-select');
 const deadzoneSlider = document.getElementById('deadzone-slider');
 const deadzoneVal = document.getElementById('deadzone-val');
 const delay1Slider = document.getElementById('delay1-slider');
@@ -331,6 +339,7 @@ const delay2Val = document.getElementById('delay2-val');
 const delay3Val = document.getElementById('delay3-val');
 const delay4Val = document.getElementById('delay4-val');
 
+let modeBehavior = parseInt(localStorage.getItem('modeBehavior')) || 0;
 let gyroDeadzone = parseInt(localStorage.getItem('gyroDeadzone')) || 15;
 let mode1Delay = parseInt(localStorage.getItem('mode1Delay')) || 200;
 let mode2Delay = parseInt(localStorage.getItem('mode2Delay')) || 200;
@@ -348,6 +357,15 @@ delay4Slider.value = mode4Delay; delay4Val.innerText = mode4Delay;
 // Settings Logic
 settingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
 settingsClose.addEventListener('click', () => settingsModal.classList.add('hidden'));
+
+if (modeBehaviorSelect) {
+  modeBehaviorSelect.value = modeBehavior;
+  modeBehaviorSelect.addEventListener('change', (e) => {
+    modeBehavior = parseInt(e.target.value);
+    localStorage.setItem('modeBehavior', modeBehavior);
+    if (controlCharacteristic) queueCommand(`*M:${modeBehavior}`);
+  });
+}
 
 deadzoneSlider.addEventListener('input', (e) => {
   gyroDeadzone = parseInt(e.target.value);

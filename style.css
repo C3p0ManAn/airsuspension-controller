@@ -368,3 +368,30 @@ input[type=range] {
   width: 100%;
   accent-color: var(--neon-red);
 }
+input[type=range]:focus {
+  outline: none;
+}
+
+.cyber-select {
+  width: 100%;
+  padding: 10px;
+  background: rgba(10, 5, 5, 0.8);
+  border: 1px solid rgba(255, 42, 42, 0.5);
+  color: var(--neon-white);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  border-radius: 8px;
+  outline: none;
+  margin-top: 5px;
+  box-shadow: inset 0 0 10px rgba(255, 42, 42, 0.2);
+  appearance: none;
+  cursor: pointer;
+}
+.cyber-select:focus {
+  border-color: var(--neon-red);
+  box-shadow: 0 0 10px var(--neon-red), inset 0 0 10px rgba(255, 42, 42, 0.5);
+}
+.cyber-select option {
+  background: #111;
+  color: #fff;
+}
