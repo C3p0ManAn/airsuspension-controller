@@ -139,8 +139,8 @@ body.gyro-overdrive .ambient-light {
   gap: 15px;
   align-items: stretch;
   justify-items: center;
-  padding-top: 18vh;
-  padding-bottom: 18vh;
+  padding-top: 13vh;
+  padding-bottom: 16vh;
   padding-left: 5%;
   padding-right: 5%;
   box-sizing: border-box;
@@ -228,10 +228,10 @@ body.gyro-overdrive .ambient-light {
   box-shadow: 0 0 15px var(--neon-red);
 }
 
-.corner-up, .corner-down { width: clamp(60px, 18vw, 85px); height: clamp(60px, 18vw, 85px); }
-.all-up, .all-down { width: clamp(80px, 22vw, 105px); height: clamp(80px, 22vw, 105px); color: var(--neon-red); }
+.corner-up, .corner-down { width: clamp(60px, 22vw, 90px); height: clamp(60px, 22vw, 90px); }
+.all-up, .all-down { width: clamp(75px, 26vw, 110px); height: clamp(75px, 26vw, 110px); color: var(--neon-red); }
 .syndicate {
-  width: clamp(100px, 30vw, 135px); height: clamp(100px, 30vw, 135px);
+  width: clamp(95px, 32vw, 145px); height: clamp(95px, 32vw, 145px);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   background: linear-gradient(145deg, #2a0808, #150000);
 }

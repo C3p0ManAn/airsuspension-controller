@@ -187,15 +187,22 @@ function startUIRoutine(action) {
     }, modeDelay); // Sync to user's dynamic MS setting
     
   } else {
-    // STANDARD STATIC MODE
-    document.body.classList.add('light-active');
-    const modeBtn = document.querySelector(`[data-action="${action}"]`);
-    if (modeBtn) {
-      modeBtn.classList.add('is-active');
-      currentAnimatedTargets = [modeBtn];
-    } else {
-      currentAnimatedTargets = [];
-    }
+    // STANDARD PULSE MODE: Every 400ms
+    document.body.classList.add('sequence-overdrive');
+    currentAnimatedTargets = seqMap[action]
+      .map(act => document.querySelector(`[data-action="${act}"]`))
+      .filter(el => el !== null);
+    
+    let isOn = true;
+    currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
+    
+    sequenceInterval = setInterval(() => {
+      isOn = !isOn;
+      currentAnimatedTargets.forEach(t => {
+        if (isOn) t.classList.add('is-active');
+        else t.classList.remove('is-active');
+      });
+    }, 400); 
   }
   
   sequenceTimeout = setTimeout(() => {
