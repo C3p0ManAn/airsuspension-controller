@@ -163,7 +163,7 @@ function startUIRoutine(action) {
   
   if (action === '1') {
     document.body.classList.add('sequence-overdrive');
-    // DANCING MODE: Alternate UP and DOWN every 200ms
+    // DANCING MODE: Alternate UP and DOWN dynamically
     const upBtns = ['A', 'B'].map(act => document.querySelector(`[data-action="${act}"]`)).filter(el => el !== null);
     const downBtns = ['E', 'F'].map(act => document.querySelector(`[data-action="${act}"]`)).filter(el => el !== null);
     const modeBtn = document.querySelector(`[data-action="1"]`);
@@ -184,16 +184,18 @@ function startUIRoutine(action) {
         upBtns.forEach(t => t.classList.remove('is-active'));
         downBtns.forEach(t => t.classList.add('is-active'));
       }
-    }, 200);
+    }, modeDelay); // Sync to user's dynamic MS setting
     
   } else {
     // STANDARD STATIC MODE
     document.body.classList.add('light-active');
-    currentAnimatedTargets = seqMap[action]
-      .map(act => document.querySelector(`[data-action="${act}"]`))
-      .filter(el => el !== null);
-    
-    currentAnimatedTargets.forEach(t => t.classList.add('is-active'));
+    const modeBtn = document.querySelector(`[data-action="${action}"]`);
+    if (modeBtn) {
+      modeBtn.classList.add('is-active');
+      currentAnimatedTargets = [modeBtn];
+    } else {
+      currentAnimatedTargets = [];
+    }
   }
   
   sequenceTimeout = setTimeout(() => {
