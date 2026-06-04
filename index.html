@@ -12,14 +12,8 @@
   <div class="ambient-light"></div>
 
   <div class="app-container">
-    <header class="header">
-      <button id="settings-btn" style="background:transparent; border:none; color:var(--neon-white); font-size:1.5rem; cursor:pointer; filter:drop-shadow(0 0 5px rgba(255,255,255,0.5));">⚙</button>
-      <div class="status-indicator">
-        <span id="ble-status-dot" class="dot disconnected"></span>
-        <span id="ble-status-text">DISCONNECTED</span>
-      </div>
-      <button id="connect-btn" class="cyber-btn connect-btn">CONNECT BLE</button>
-    </header>
+    <!-- Floating Settings Gear -->
+    <button id="settings-btn" class="floating-gear">⚙️</button>
 
     <!-- Clean, Hexagonal Wheel Grid -->
     <main class="control-grid">
@@ -82,7 +76,15 @@
   <!-- Settings Modal -->
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal-box">
-      <h2 style="color:var(--neon-white); margin-bottom: 20px; font-family:var(--font-heading);">SYSTEM SETUP</h2>
+      <h2 style="color:var(--neon-white); margin-bottom: 20px; font-family:var(--font-heading);">SYSTEM CORE</h2>
+      
+      <div class="ble-status-panel">
+        <div class="status-indicator">
+          <span id="ble-status-dot"></span>
+          <span id="ble-status-text">DISCONNECTED</span>
+        </div>
+        <button id="connect-btn" class="connect-btn" style="width:100%; margin-bottom:20px;">CONNECT BLE</button>
+      </div>
       
       <div class="setting-group">
         <label>Gyro Deadzone: <span id="deadzone-val">15</span>°</label>
