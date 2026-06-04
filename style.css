@@ -84,7 +84,7 @@ body.gyro-lock .preset-btn.control-btn {
 
 .floating-gear {
   position: absolute;
-  top: 14px;
+  top: 20px;
   left: 20px;
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(35px) saturate(120%);

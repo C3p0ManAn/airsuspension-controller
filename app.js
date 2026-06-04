@@ -90,7 +90,10 @@ function onConnected() {
   
   // Sync custom delay setting to ESP32
   setTimeout(() => {
-    if (typeof modeDelay !== 'undefined') queueCommand(`*D${modeDelay}`);
+    if (typeof mode1Delay !== 'undefined') queueCommand(`*1:${mode1Delay}`);
+    if (typeof mode2Delay !== 'undefined') queueCommand(`*2:${mode2Delay}`);
+    if (typeof mode3Delay !== 'undefined') queueCommand(`*3:${mode3Delay}`);
+    if (typeof mode4Delay !== 'undefined') queueCommand(`*4:${mode4Delay}`);
   }, 500);
 }
 
@@ -161,6 +164,12 @@ let currentAnimatedTargets = [];
 function startUIRoutine(action) {
   stopUIRoutine(); // clear any existing animations
   
+  let activeDelay = 200;
+  if (action === '1') activeDelay = mode1Delay;
+  else if (action === '2') activeDelay = mode2Delay;
+  else if (action === '3') activeDelay = mode3Delay;
+  else if (action === '4') activeDelay = mode4Delay;
+  
   if (action === '1') {
     document.body.classList.add('sequence-overdrive');
     // DANCING MODE: Alternate UP and DOWN dynamically
@@ -184,10 +193,10 @@ function startUIRoutine(action) {
         upBtns.forEach(t => t.classList.remove('is-active'));
         downBtns.forEach(t => t.classList.add('is-active'));
       }
-    }, modeDelay); // Sync to user's dynamic MS setting
+    }, activeDelay); // Sync to user's dynamic MS setting
     
   } else {
-    // HYBRID PULSE MODE: Every 400ms
+    // HYBRID PULSE MODE
     document.body.classList.add('sequence-overdrive');
     
     // Separate the Mode button from the Valve buttons
@@ -210,7 +219,7 @@ function startUIRoutine(action) {
         if (isOn) t.classList.add('is-active');
         else t.classList.remove('is-active');
       });
-    }, 400); 
+    }, activeDelay); 
     
     // Store all of them in currentAnimatedTargets for cleanup
     currentAnimatedTargets = [...valveTargets];
@@ -311,17 +320,29 @@ const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
 const settingsClose = document.getElementById('settings-close');
 const deadzoneSlider = document.getElementById('deadzone-slider');
-const delaySlider = document.getElementById('delay-slider');
-const deadzoneVal = document.getElementById('deadzone-val');
-const delayVal = document.getElementById('delay-val');
+const delay1Slider = document.getElementById('delay1-slider');
+const delay2Slider = document.getElementById('delay2-slider');
+const delay3Slider = document.getElementById('delay3-slider');
+const delay4Slider = document.getElementById('delay4-slider');
+
+const delay1Val = document.getElementById('delay1-val');
+const delay2Val = document.getElementById('delay2-val');
+const delay3Val = document.getElementById('delay3-val');
+const delay4Val = document.getElementById('delay4-val');
 
 let gyroDeadzone = parseInt(localStorage.getItem('gyroDeadzone')) || 15;
-let modeDelay = parseInt(localStorage.getItem('modeDelay')) || 200;
+let mode1Delay = parseInt(localStorage.getItem('mode1Delay')) || 200;
+let mode2Delay = parseInt(localStorage.getItem('mode2Delay')) || 200;
+let mode3Delay = parseInt(localStorage.getItem('mode3Delay')) || 200;
+let mode4Delay = parseInt(localStorage.getItem('mode4Delay')) || 200;
 
 deadzoneSlider.value = gyroDeadzone;
 deadzoneVal.innerText = gyroDeadzone;
-delaySlider.value = modeDelay;
-delayVal.innerText = modeDelay;
+
+delay1Slider.value = mode1Delay; delay1Val.innerText = mode1Delay;
+delay2Slider.value = mode2Delay; delay2Val.innerText = mode2Delay;
+delay3Slider.value = mode3Delay; delay3Val.innerText = mode3Delay;
+delay4Slider.value = mode4Delay; delay4Val.innerText = mode4Delay;
 
 // Settings Logic
 settingsBtn.addEventListener('click', () => settingsModal.classList.remove('hidden'));
@@ -333,11 +354,32 @@ deadzoneSlider.addEventListener('input', (e) => {
   localStorage.setItem('gyroDeadzone', gyroDeadzone);
 });
 
-delaySlider.addEventListener('input', (e) => {
-  modeDelay = parseInt(e.target.value);
-  delayVal.innerText = modeDelay;
-  localStorage.setItem('modeDelay', modeDelay);
-  if (controlCharacteristic) queueCommand(`*D${modeDelay}`);
+delay1Slider.addEventListener('input', (e) => {
+  mode1Delay = parseInt(e.target.value);
+  delay1Val.innerText = mode1Delay;
+  localStorage.setItem('mode1Delay', mode1Delay);
+  if (controlCharacteristic) queueCommand(`*1:${mode1Delay}`);
+});
+
+delay2Slider.addEventListener('input', (e) => {
+  mode2Delay = parseInt(e.target.value);
+  delay2Val.innerText = mode2Delay;
+  localStorage.setItem('mode2Delay', mode2Delay);
+  if (controlCharacteristic) queueCommand(`*2:${mode2Delay}`);
+});
+
+delay3Slider.addEventListener('input', (e) => {
+  mode3Delay = parseInt(e.target.value);
+  delay3Val.innerText = mode3Delay;
+  localStorage.setItem('mode3Delay', mode3Delay);
+  if (controlCharacteristic) queueCommand(`*3:${mode3Delay}`);
+});
+
+delay4Slider.addEventListener('input', (e) => {
+  mode4Delay = parseInt(e.target.value);
+  delay4Val.innerText = mode4Delay;
+  localStorage.setItem('mode4Delay', mode4Delay);
+  if (controlCharacteristic) queueCommand(`*4:${mode4Delay}`);
 });
 
 // Gyro Logic
